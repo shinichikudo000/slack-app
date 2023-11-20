@@ -1,4 +1,5 @@
 import React from 'react'
+import { API } from '../../_api/api'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import  { useForm } from 'react-hook-form'
@@ -18,10 +19,8 @@ const SignUpForm = () => {
     const {
         register,
         handleSubmit,
-        formState: { errors, isSubmitting },
-        reset,
-        getValues
-    } = useForm<SignUpSchema>({
+        formState: { errors, isSubmitting }
+        } = useForm<SignUpSchema>({
         resolver: zodResolver(signUpSchema)
     })
 
