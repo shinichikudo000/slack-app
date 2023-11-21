@@ -7,14 +7,11 @@ import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Link, useNavigate, Navigate, useLoaderData } from 'react-router-dom'
 import { API } from '@/_api/api'
-// import { UserContext } from '../AuthLayout'
 import { Progress } from '@/components/ui/progress'
 import { User } from '@/_hooks/context'
-// import { User, CurrentUserAction } from '@/_hooks/context'
+
 
 const SignInForm = () => {
-    // const dispatch = useContext(UserContext) as { user: User; dispatch: Dispatch<CurrentUserAction> } | null
-    // const { user, dispatch } = useContext(UserContext)!
 
     const { "access-token": accessToken, uid, expiry, client } = useLoaderData() as User;
 
@@ -47,14 +44,6 @@ const SignInForm = () => {
                 localStorage.setItem('client', headers['client']);
                 localStorage.setItem('expiry', headers['expiry']);
 
-                // dispatch({
-                //     type: 'currentUser',
-                //     accessToken: res.headers['access-token'],
-                //     uid: res.headers['uid'],
-                //     expiry: res.headers['expiry'],
-                //     client: res.headers['client'],
-                // })
-                
                 navigate('/')
             }
         } catch (error: any) {

@@ -6,9 +6,12 @@ import { Button } from '@/components/ui/button'
 import { signUpSchema, TSignUpSchema } from '../validation/validation'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useLoaderData, useNavigate } from 'react-router-dom'
+import { User } from '@/_hooks/context'
 
 const SignUpForm = () => {
+    const { "access-token": accessToken, uid, expiry, client } = useLoaderData() as User;
+
     const form = useForm<TSignUpSchema>({
         resolver: zodResolver(signUpSchema),
         defaultValues: {
@@ -58,61 +61,69 @@ const SignUpForm = () => {
     }
 
     return (
-        <Form {...form}>
-            <div>
-                <h2>Create New Account</h2>
-                <p>To use ... enter your details</p>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 w-full mt-4 text-left">
-                    <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                            <Input type='email' placeholder="Email" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-                    <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                            <Input type='password' placeholder="Password" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-                    <FormField
-                    control={form.control}
-                    name="confirmPassword"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Confirm Password</FormLabel>
-                        <FormControl>
-                            <Input type='password' placeholder="Confirm Password" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-                    <Button type="submit" disabled={form.formState.isSubmitting} className='shad-button_primary'>Submit</Button>
-                    {
-                        form.formState.isSubmitting ? 'Creating New Account...' : ''
-                    }
+        <>
+            {
+                accessToken && uid && expiry && client ? (
+                    <Navigate to='/' />
+                ) : (
+                    <Form {...form}>
+                        <div>
+                            <h2>Create New Account</h2>
+                            <p>To use ... enter your details</p>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 w-full mt-4 text-left">
+                                <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                        <Input type='email' placeholder="Email" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                    </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                control={form.control}
+                                name="password"
+                                render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>Password</FormLabel>
+                                    <FormControl>
+                                        <Input type='password' placeholder="Password" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                    </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                control={form.control}
+                                name="confirmPassword"
+                                render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>Confirm Password</FormLabel>
+                                    <FormControl>
+                                        <Input type='password' placeholder="Confirm Password" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                    </FormItem>
+                                    )}
+                                />
+                                <Button type="submit" disabled={form.formState.isSubmitting} className='shad-button_primary'>Submit</Button>
+                                {
+                                    form.formState.isSubmitting ? 'Creating New Account...' : ''
+                                }
 
-                    <p>
-                        Already have an account? <Link to='/sign-in'>Log in</Link>
-                    </p>
-                </form>
-            </div>
-        </Form>
+                                <p>
+                                    Already have an account? <Link to='/sign-in'>Log in</Link>
+                                </p>
+                            </form>
+                        </div>
+                    </Form>
+                )
+            }
+        </>
     )
 }
 
