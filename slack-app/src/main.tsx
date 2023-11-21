@@ -10,7 +10,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: '/home',
     element: <App />
   },
   { 

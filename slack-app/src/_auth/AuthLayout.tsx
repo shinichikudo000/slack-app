@@ -1,18 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
+import { UserContext } from '@/_hooks/context';
+
+export interface User {
+    accessToken?: string;
+    uid?: string;
+    expiry?: number;
+    client?: string;
+}
 
 const AuthLayout = () => {
-  const isAuthenticated: boolean = false;
-
+    const [user, setUser] = useState<User>({});
+    
   return (
     <>
      {
-        isAuthenticated ? (
-            <Navigate to="/" />
+        user.accessToken? (
+            <Navigate to="/home" />
           ) : (
             <>
                 <section className='flex flex-1 justify-center items-center flex-col py-10'>
-                    <Outlet />
+                    <UserContext.Provider value={{user, setUser}}>
+                        <Outlet />
+                    </UserContext.Provider>
                 </section>
                 <section className=''>
 
