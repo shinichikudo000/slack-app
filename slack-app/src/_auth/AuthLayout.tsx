@@ -1,32 +1,35 @@
-import React, { useState } from 'react';
-import { Outlet, Navigate } from 'react-router-dom';
-import { UserContext } from '@/_hooks/context';
+import React from 'react';
+import { Outlet, Navigate, useLoaderData } from 'react-router-dom';
+import { User } from '@/_hooks/context';
+import { Toaster } from '@/components/ui/toaster';
 
-export interface User {
-    accessToken?: string;
-    uid?: string;
-    expiry?: number;
-    client?: string;
-}
+// export const UserContext = createContext<{ user: User; dispatch: Dispatch<CurrentUserAction> } | null>(null)
 
 const AuthLayout = () => {
-    const [user, setUser] = useState<User>({});
+  const { "access-token": accessToken, uid, expiry, client } = useLoaderData() as User;
+    // const [user, dispatch] = useReducer(reducer, {
+    //   accessToken: null,
+    //   uid: null,
+    //   expiry: null,
+    //   client: null,
+    // });
     
   return (
     <>
      {
-        user.accessToken? (
-            <Navigate to="/home" />
+        accessToken && uid && expiry && client ? (
+            <Navigate to="/" />
           ) : (
             <>
                 <section className='flex flex-1 justify-center items-center flex-col py-10'>
-                    <UserContext.Provider value={{user, setUser}}>
+                    {/* <UserContext.Provider value={{user, dispatch}}> */}
                         <Outlet />
-                    </UserContext.Provider>
+                    {/* </UserContext.Provider> */}
                 </section>
                 <section className=''>
 
                 </section>
+                <Toaster />
             </>
           )
      }

@@ -1,17 +1,22 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { TSignInSchema, signInSchema } from '../validation/validation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
-import { Link, useNavigate, Navigate } from 'react-router-dom'
+import { Link, useNavigate, Navigate, useLoaderData } from 'react-router-dom'
 import { API } from '@/_api/api'
-import { UserContext } from '@/_hooks/context'
+// import { UserContext } from '../AuthLayout'
+import { Progress } from '@/components/ui/progress'
+import { User } from '@/_hooks/context'
+// import { User, CurrentUserAction } from '@/_hooks/context'
 
 const SignInForm = () => {
-    const { user , setUser } = useContext(UserContext)
+    // const dispatch = useContext(UserContext) as { user: User; dispatch: Dispatch<CurrentUserAction> } | null
+    // const { user, dispatch } = useContext(UserContext)!
 
+    const { "access-token": accessToken, uid, expiry, client } = useLoaderData() as User;
 
     const form = useForm<TSignInSchema>({
         resolver: zodResolver(signInSchema),
@@ -30,25 +35,27 @@ const SignInForm = () => {
                 password: data.password
             })
             if (res.status === 200) {
-                API.defaults.headers['uid'] = res.headers['uid'];
-                API.defaults.headers['access-token'] = res.headers['access-token'];
-                API.defaults.headers['client'] = res.headers['client'];
-                API.defaults.headers['expiry'] = res.headers['expiry'];
+                const headers = res.headers || {}
+
+                API.defaults.headers['uid'] = headers['uid'];
+                API.defaults.headers['access-token'] = headers['access-token'];
+                API.defaults.headers['client'] = headers['client'];
+                API.defaults.headers['expiry'] = headers['expiry'];
         
-                localStorage.setItem('uid', res.headers['uid']);
-                localStorage.setItem('access-token', res.headers['access-token']);
-                localStorage.setItem('client', res.headers['client']);
-                localStorage.setItem('expiry', res.headers['expiry']);
+                localStorage.setItem('uid', headers['uid']);
+                localStorage.setItem('access-token', headers['access-token']);
+                localStorage.setItem('client', headers['client']);
+                localStorage.setItem('expiry', headers['expiry']);
+
+                // dispatch({
+                //     type: 'currentUser',
+                //     accessToken: res.headers['access-token'],
+                //     uid: res.headers['uid'],
+                //     expiry: res.headers['expiry'],
+                //     client: res.headers['client'],
+                // })
                 
-                contextValue?.setUserAuthenticated()
-
-                console.log('User after authentication:', contextValue?.user);
-                console.log('IsAuthenticated:', isAuthenticated)
-                console.log(res)
-                console.log(isAuthenticated)
-
-                navigate('/home')
-
+                navigate('/')
             }
         } catch (error: any) {
             console.log(error.response);
@@ -70,13 +77,13 @@ const SignInForm = () => {
   return (
     <>
         {
-            isAuthenticated? (
-                <Navigate to='/home' />
+            accessToken && uid && expiry && client ? (
+                <Navigate to='/' />
             ) : (
                 <>
                     <Form {...form}>   
                         <div>
-                            <h2>Log in</h2>
+                            <h2>Sign In</h2>
                             <p>To use ... enter your details</p>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 w-full mt-4 text-left">
                                 <FormField
@@ -107,7 +114,7 @@ const SignInForm = () => {
                                 />
                                 <Button type="submit" disabled={form.formState.isSubmitting} className='shad-button_primary'>Sign in</Button>
                                 {
-                                    form.formState.isSubmitting ? 'Loading' : ''
+                                    form.formState.isSubmitting ? <Progress value={33} /> : ''
                                 }
 
                                 <p>

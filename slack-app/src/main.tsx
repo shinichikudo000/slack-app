@@ -7,18 +7,22 @@ import SignInForm from './_auth/forms/SignInForm.tsx'
 import AuthLayout from './_auth/AuthLayout.tsx'
 import SignUpForm from './_auth/forms/SignUpForm.tsx'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { currentUserLoader } from './_route/loader.ts'
 
 const router = createBrowserRouter([
   {
-    path: '/home',
-    element: <App />
+    path: '/',
+    element: <App />,
+    loader: currentUserLoader
   },
   { 
     element: <AuthLayout />,
+    loader: currentUserLoader,
     children: [
       {
         path: '/sign-in',
         element: <SignInForm />,
+        loader: currentUserLoader
       },
       {
         path: '/sign-up',
