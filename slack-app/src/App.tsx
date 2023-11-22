@@ -1,10 +1,9 @@
 import React from 'react'
 import './App.css'
-import SignOut from './_root/SignOut'
 import { Toaster } from './components/ui/toaster'
-import { Navigate, useLoaderData } from 'react-router-dom'
+import { Navigate, Outlet, useLoaderData } from 'react-router-dom'
 import { User } from './_hooks/context'
-// import { useLoaderData } from 'react-router-dom'
+import SideBar from './_root/SideBar'
 
 
 function App() {
@@ -16,10 +15,11 @@ function App() {
       !accessToken && !uid && !expiry && !client ? (
         <Navigate to='/sign-in' />
       ) : (
-        <section>
-          <SignOut />
+        <>
+          <SideBar />
+          <Outlet />
           <Toaster />
-        </section>
+        </>
        )
     }
     </>
