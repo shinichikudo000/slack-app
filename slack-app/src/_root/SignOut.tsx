@@ -23,7 +23,7 @@ const SignOut = () => {
   };
 
   return (
-    <Button onClick={handleLogOut}>
+    <Button onClick={handleLogOut} className='absolute bottom-8 left-8'>
       Log Out
     </Button>
   );

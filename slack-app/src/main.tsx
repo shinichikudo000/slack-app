@@ -14,7 +14,12 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
-    loader: currentUserLoader
+    loader: currentUserLoader,
+    children: [
+      {
+        
+      }
+    ]
   },
   { 
     element: <AuthLayout />,

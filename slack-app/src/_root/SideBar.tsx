@@ -2,61 +2,82 @@ import React, { useEffect, useState } from 'react';
 import SignOut from './SignOut';
 import SearchBar from './components/SearchBar';
 import { useQuery } from '@tanstack/react-query';
-import { fetchUsers } from '@/react_query/utils';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
+import { fetchChannels, fetchUsers, filterUsers } from '@/react_query/utils';
 import { useDebounce } from '@/_hooks/hooks';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import UserCard from './components/UserCard';
+import IsLoading from './components/IsLoading';
 
 export interface User {
     id: number;
     provider: string;
     uid: string;
-    allow_password_change: boolean;
     name: string | null;
-    nickname: string | null;
-    image: string | null;
     email: string;
-    created_at: string;
-    updated_at: string;
 }
 
 const SideBar = () => {
-  const { data: allUsers, isLoading } = useQuery<User[], Error>({
-    queryKey: ['allUsers'],
-    queryFn: fetchUsers,
-  })
+    const { data: allUsers, isLoading: isAllUsersLoading} = useQuery<User[], Error>({
+        queryKey: ['allUsers'],
+        queryFn: fetchUsers,
+    })
+    
+    const {data: allChannels, isLoading: isAllChannelsLoading} = useQuery({
+        queryKey: ['allChannels'],
+        queryFn: fetchChannels
+    })
 
     const [users, setUsers] = useState<User[]>([])
     const [search, setSearch] = useState<string>()
     const debouncedSearch = useDebounce(search, 500)
+    const [receiver, setReceiver] = useState<string>('users')
+    const [isSearchLoading, setIsSearchLoading] = useState<boolean>(false)
 
     useEffect(() => {
         const loadUsers = async () => {
-            const users = filterAllUser(debouncedSearch)
+            setIsSearchLoading(true)
+            const users = await filterUsers(debouncedSearch || '', allUsers || [])
             setUsers(users)
+            setIsSearchLoading(false)
         }
-        loadUsers()
+        const loadChannels = async () => {
+
+        }
+        if(receiver === 'users') {
+            loadUsers()
+        } else if (receiver === 'channels') {
+            console.log(debouncedSearch)
+            loadChannels()
+        }
     }, [debouncedSearch])
 
   return (
     <>
-      <section className='w-1/4'>
-        <SearchBar onChange={setSearch} />
+        <section className='w-1/4 absolute top-0 left-0 p-8 h-full overflow-hidden'>
+        <SearchBar onChange={setSearch}/>
+        <ToggleGroup type="single" className='my-4 flex justify-start'>
+            <ToggleGroupItem value="users" onClick={() => {setReceiver('users')}}>
+                <p>Users</p> 
+            </ToggleGroupItem>
+            <ToggleGroupItem value="channels" onClick={() => {setReceiver('channels')}}>
+                <p>Channels</p>
+            </ToggleGroupItem>
+        </ToggleGroup>
         {
-            isLoading ? (
-                <div className="flex items-center space-x-4 w-full">
-                    <Skeleton className="h-12 w-12 rounded-full" />
-                    <div className="space-y-2">
-                        <Skeleton className="h-4 w-[15rem]" />
-                        <Skeleton className="h-4 w-[10rem]" />
-                    </div>
-                </div>
+            isAllUsersLoading || isAllChannelsLoading ? (
+                <IsLoading />
         ) : (
-            <div>
-                <ul>
-                { users?.map((user) => {
-                    return <div>{user.id}</div>
-                })}
+            <div className='overflow-y-auto overflow-x-hidden h-[80%] w-full text-ellipsis'>
+                <ul> 
+                    { isSearchLoading ? (
+                        <IsLoading />
+                    ) : receiver === 'users' ? (
+                        users?.map((user) => {
+                            return <UserCard userProp={user}/>
+                        })
+                    ) : (
+                        <div></div>
+                    )}
                 </ul>
             </div>
         )}
