@@ -8,9 +8,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Link, Navigate, useLoaderData, useNavigate } from 'react-router-dom'
 import { User } from '@/_hooks/context'
+import { Progress } from '@/components/ui/progress'
+import { toast } from '@/components/ui/use-toast'
+
 
 const SignUpForm = () => {
-    const { "access-token": accessToken, uid, expiry, client } = useLoaderData() as User;
+    const { "access-token": accessToken, uid, expiry, client } = useLoaderData() as User
 
     const form = useForm<TSignUpSchema>({
         resolver: zodResolver(signUpSchema),
@@ -31,28 +34,32 @@ const SignUpForm = () => {
                 password_confirmation: data.confirmPassword
             })
             if (res.status === 200) {
-                API.defaults.headers['uid'] = res.headers['uid'];
-                API.defaults.headers['access-token'] = res.headers['access-token'];
-                API.defaults.headers['client'] = res.headers['client'];
-                API.defaults.headers['expiry'] = res.headers['expiry'];
+                const headers = res.headers || {}
+
+                API.defaults.headers['uid'] = headers['uid'];
+                API.defaults.headers['access-token'] = headers['access-token'];
+                API.defaults.headers['client'] = headers['client'];
+                API.defaults.headers['expiry'] = headers['expiry'];
         
-                localStorage.setItem('uid', res.headers['uid']);
-                localStorage.setItem('access-token', res.headers['access-token']);
-                localStorage.setItem('client', res.headers['client']);
-                localStorage.setItem('expiry', res.headers['expiry']);
+                localStorage.setItem('uid', headers['uid']);
+                localStorage.setItem('access-token', headers['access-token']);
+                localStorage.setItem('client', headers['client']);
+                localStorage.setItem('expiry', headers['expiry']);
+
+                toast({
+                    title: 'Account Creation Successful',
+                    description: 'Your new account has been successfully created.'
+                })
         
                 navigate('/sign-in');
               }
         } catch (error: any) {
-            console.log(error.response.data.errors)
             if (error.response && error.response.data && error.response.data.errors) {
-                const { errors } = error.response.data;
-        
-                Object.keys(errors).forEach((field: any) => {
-                    form.setError(field, {
-                      type: 'manual',
-                      message: `${field} ${errors[field][0]}`, 
-                    })
+                const errors  = error.response.data.errors.full_messages;
+
+                form.setError('email', {
+                    type: 'manual',
+                    message: errors[0], 
                   })
             } else {
                 alert('An error occurred. Please try again.');
@@ -112,7 +119,7 @@ const SignUpForm = () => {
                                 />
                                 <Button type="submit" disabled={form.formState.isSubmitting} className='shad-button_primary'>Submit</Button>
                                 {
-                                    form.formState.isSubmitting ? 'Creating New Account...' : ''
+                                    form.formState.isSubmitting ? <Progress value={33} /> : ''
                                 }
 
                                 <p>

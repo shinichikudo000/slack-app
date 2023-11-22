@@ -13,7 +13,7 @@ import { User } from '@/_hooks/context'
 
 const SignInForm = () => {
 
-    const { "access-token": accessToken, uid, expiry, client } = useLoaderData() as User;
+    const { "access-token": accessToken, uid, expiry, client } = useLoaderData() as User
 
     const form = useForm<TSignInSchema>({
         resolver: zodResolver(signInSchema),
@@ -47,17 +47,15 @@ const SignInForm = () => {
                 navigate('/')
             }
         } catch (error: any) {
-            console.log(error.response);
 
             if (error.response && error.response.data && error.response.data.errors) {
                 const { errors } = error.response.data;
-
-                Object.keys(errors).forEach((field: any) => {
-                    form.setError(field, {
+                
+                form.setError('email', {
                     type: 'manual',
-                    message: errors[field], 
-                    });
-                });
+                    message: errors[0]
+                })
+
             } else {
                 alert('An error occurred. Please try again.');
             }

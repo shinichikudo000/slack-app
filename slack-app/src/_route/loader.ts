@@ -9,10 +9,8 @@ export async function currentUserLoader() {
             'expiry': localStorage.getItem('expiry') || '',
             'client': localStorage.getItem('client') || ''
         };
-        console.log(currentUser as User)
         return currentUser as User
     } catch (error) {
-        console.log(error)
         throw error
     }
 }
