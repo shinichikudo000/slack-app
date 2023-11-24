@@ -16,6 +16,11 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        anton: "'Anton', sans-serif",
+        oxygen: "'Oxygen', sans-serif",
+        sourceCodePro: "'Source Code Pro', monospace",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

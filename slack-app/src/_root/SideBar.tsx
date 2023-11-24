@@ -64,20 +64,21 @@ const SideBar = () => {
   return (
     <>
         <section className='absolute top-0 left-0 p-8 h-full overflow-hidden min-w-[300px]'>
-        <SearchBar onChange={setSearch}/>
+        <img src='/antisocial.png' alt='AntiSocial' className='w-[100px] mb-4'/>
+        <SearchBar onChange={setSearch} />
         <ToggleGroup type="single" className='my-4 flex justify-start'>
             <ToggleGroupItem value="users" onClick={() => {setReceiver('users')}}>
-                <p>Users</p> 
+                <p className='font-oxygen'>Users</p> 
             </ToggleGroupItem>
             <ToggleGroupItem value="channels" onClick={() => {setReceiver('channels')}}>
-                <p>Channels</p>
+                <p className='font-oxygen'>Channels</p>
             </ToggleGroupItem>
         </ToggleGroup>
         {
             isAllUsersLoading || isAllChannelsLoading ? (
                 <IsLoading />
         ) : (
-            <div className='overflow-y-auto overflow-x-hidden h-[80%] w-full text-ellipsis'>
+            <div className='overflow-y-auto overflow-x-hidden h-[65%] w-full text-ellipsis'>
                 <ul> 
                     { isSearchLoading ? (
                         <IsLoading />
@@ -87,7 +88,7 @@ const SideBar = () => {
                                 return <UserCard userProp={user}/>
                             })
                         ) : (
-                            <div>No user found.</div>
+                            <div className='font-oxygen'>No user found.</div>
                         )
                     ) : (
                        channels.length > 0 ? (
@@ -95,7 +96,7 @@ const SideBar = () => {
                             return <div>{channel.id}</div>
                         })
                        ) : (
-                            <div>No channel found.</div>
+                            <div className='font-oxygen'>No channel found.</div>
                        )
                     )}
                 </ul>

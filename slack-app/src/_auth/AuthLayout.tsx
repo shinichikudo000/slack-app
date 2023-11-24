@@ -12,17 +12,12 @@ const AuthLayout = () => {
         accessToken && uid && expiry && client ? (
             <Navigate to="/" />
           ) : (
-            <>
-                <section className='flex flex-1 justify-center items-center flex-col py-10'>
-                    {/* <UserContext.Provider value={{user, dispatch}}> */}
+            <section className='w-full h-full flex justify-center items-center'>
+                <div className='flex justify-center items-center flex-col py-10 h-full w-[400px]'>
                         <Outlet />
-                    {/* </UserContext.Provider> */}
-                </section>
-                <section className=''>
-
-                </section>
+                </div>
                 <Toaster />
-            </>
+            </section>
           )
      }
     </>

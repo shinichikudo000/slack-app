@@ -69,18 +69,19 @@ const SignInForm = () => {
             ) : (
                 <>
                     <Form {...form}>   
+                    <img src='/antisocial.png' alt='AntiSocial' className='w-[150px]'/>
                         <div>
-                            <h2>Sign In</h2>
-                            <p>To use ... enter your details</p>
+                            <h2 className='font-sourceCodePro text-2xl'>Sign In</h2>
+                            <p className='font-sourceCodePro text-lg'>To use AntiSocial enter your details</p>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 w-full mt-4 text-left">
                                 <FormField
                                 control={form.control}
                                 name="email"
                                 render={({ field }) => (
                                     <FormItem>
-                                    <FormLabel>Email</FormLabel>
+                                    <FormLabel className='font-oxygen'>Email</FormLabel>
                                     <FormControl>
-                                        <Input type='email' placeholder="Email" {...field} />
+                                        <Input type='email' placeholder="Email" {...field} className='font-oxygen'/>
                                     </FormControl>
                                     <FormMessage />
                                     </FormItem>
@@ -91,20 +92,20 @@ const SignInForm = () => {
                                 name="password"
                                 render={({ field }) => (
                                     <FormItem>
-                                    <FormLabel>Password</FormLabel>
+                                    <FormLabel className='font-oxygen'>Password</FormLabel>
                                     <FormControl>
-                                        <Input type='password' placeholder="Password" {...field} />
+                                        <Input type='password' placeholder="Password" {...field} className='font-oxygen' />
                                     </FormControl>
                                     <FormMessage />
                                     </FormItem>
                                     )}
                                 />
-                                <Button type="submit" disabled={form.formState.isSubmitting} className='shad-button_primary'>Sign in</Button>
+                                <Button type="submit" disabled={form.formState.isSubmitting} className='shad-button_primary font-sourceCodePro'>Sign in</Button>
                                 {
                                     form.formState.isSubmitting ? <Progress value={33} /> : ''
                                 }
 
-                                <p>
+                                <p className='font-oxygen text-center'>
                                     Doesn't have an account? <Link to='/sign-up'>Sign up</Link>
                                 </p>
                             </form>

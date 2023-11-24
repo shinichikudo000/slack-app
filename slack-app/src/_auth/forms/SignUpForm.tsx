@@ -45,11 +45,6 @@ const SignUpForm = () => {
                 localStorage.setItem('access-token', headers['access-token']);
                 localStorage.setItem('client', headers['client']);
                 localStorage.setItem('expiry', headers['expiry']);
-
-                toast({
-                    title: 'Account Creation Successful',
-                    description: 'Your new account has been successfully created.'
-                })
         
                 navigate('/sign-in');
               }
@@ -74,18 +69,19 @@ const SignUpForm = () => {
                     <Navigate to='/' />
                 ) : (
                     <Form {...form}>
+                        <img src='/antisocial.png' alt='AntiSocial' className='w-[150px]'/>
                         <div>
-                            <h2>Create New Account</h2>
-                            <p>To use ... enter your details</p>
+                            <h2 className='font-sourceCodePro text-2xl'>Create New Account</h2>
+                            <p className='font-sourceCodePro text-lg'>To use AntiSocial enter your details</p>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 w-full mt-4 text-left">
                                 <FormField
                                 control={form.control}
                                 name="email"
                                 render={({ field }) => (
                                     <FormItem>
-                                    <FormLabel>Email</FormLabel>
+                                    <FormLabel className='font-oxygen'>Email</FormLabel>
                                     <FormControl>
-                                        <Input type='email' placeholder="Email" {...field} />
+                                        <Input type='email' placeholder="Email" {...field}  className='font-oxygen'/>
                                     </FormControl>
                                     <FormMessage />
                                     </FormItem>
@@ -96,9 +92,9 @@ const SignUpForm = () => {
                                 name="password"
                                 render={({ field }) => (
                                     <FormItem>
-                                    <FormLabel>Password</FormLabel>
+                                    <FormLabel className='font-oxygen'>Password</FormLabel>
                                     <FormControl>
-                                        <Input type='password' placeholder="Password" {...field} />
+                                        <Input type='password' placeholder="Password" {...field}  className='font-oxygen'/>
                                     </FormControl>
                                     <FormMessage />
                                     </FormItem>
@@ -109,26 +105,32 @@ const SignUpForm = () => {
                                 name="confirmPassword"
                                 render={({ field }) => (
                                     <FormItem>
-                                    <FormLabel>Confirm Password</FormLabel>
+                                    <FormLabel className='font-oxygen'>Confirm Password</FormLabel>
                                     <FormControl>
-                                        <Input type='password' placeholder="Confirm Password" {...field} />
+                                        <Input type='password' placeholder="Confirm Password" {...field} className='font-oxygen'/>
                                     </FormControl>
                                     <FormMessage />
                                     </FormItem>
                                     )}
                                 />
-                                <Button type="submit" disabled={form.formState.isSubmitting} className='shad-button_primary'>Submit</Button>
+                                <Button type="submit" disabled={form.formState.isSubmitting} className='shad-button_primary font-sourceCodePro'>Submit</Button>
                                 {
                                     form.formState.isSubmitting ? <Progress value={33} /> : ''
                                 }
 
-                                <p>
+                                <p className='font-oxygen text-center'>
                                     Already have an account? <Link to='/sign-in'>Log in</Link>
                                 </p>
                             </form>
                         </div>
                     </Form>
                 )
+            }
+            {
+                form.formState.isSubmitSuccessful && toast({
+                    title: 'Account Creation Successful',
+                    description: 'Your new account has been successfully created.'
+                    })
             }
         </>
     )

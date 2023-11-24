@@ -7,19 +7,25 @@ export const fetchUsers = async (): Promise<User[]> => {
     return response.data.data;
 }
 
-export const messageQuery = ({id, class: className}: MessageQueryParams): MessageQuery => ({
+export const messageQuery = ({ id, class: className }: any) => ({
     queryKey: [`${className}_${id}`],
     queryFn: async () => {
-        try {
-            const response = await API.get('/messages', {
+        const response = await API.get('/messages', {
+           params: {
                 receiver_id: id,
                 receiver_class: className
-            });
-            return response.data;
-          } catch (error) {
-            console.error('Error fetching message:', error);
-            throw error; 
+           }
+        })
+        if(response) {
+            console.log(response.data)
         }
+        if(response.data.error) {
+             throw new Response('', {
+                status: 404,
+                 statusText: 'Not Found'
+             })
+        }
+        return response.data.data
     }
 })
 

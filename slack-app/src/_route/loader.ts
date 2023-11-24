@@ -18,7 +18,7 @@ export async function currentUserLoader() {
 }
 
 export const messageLoader = (queryClient: any) => async ({ params }: any) => {
-    const query = messageQuery(params)
+    const query = messageQuery({ id: params.id, class: params.class })
     return (
         queryClient.getQueryData(query.queryKey) ??
         (await queryClient.fetchQuery(query))

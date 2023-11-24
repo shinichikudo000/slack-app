@@ -11,7 +11,8 @@ const SearchBar = ({onChange}: SearchBarProps) => {
         <Input 
         type='text'
         placeholder='Search Contacts'
-        onChange={(e) => onChange(e.target.value)}/>
+        onChange={(e) => onChange(e.target.value)
+        }/>
     </>
   )
 }

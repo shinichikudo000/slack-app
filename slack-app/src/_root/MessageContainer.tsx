@@ -11,7 +11,18 @@ const MessageContainer = () => {
     }))
 
   return (
-    <div>{message}</div>
+    <>
+        {
+            message.length === 0 ? (
+                <div>No existing conversation</div>
+            ) : (
+                message.map((messages: any) => {
+                    return <div>{messages.body}</div>
+                })
+            )
+        }
+
+    </>
   )
 }
 

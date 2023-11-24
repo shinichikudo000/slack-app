@@ -11,11 +11,12 @@ import { currentUserLoader, messageLoader } from './_route/loader.ts'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import MessageContainer from './_root/MessageContainer.tsx'
 import NoChatSelected from './_root/NoChatSelected.tsx'
+import Practice from './_root/Practice.tsx'
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 10,
+      staleTime: Infinity,
     },
   },
 })
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
         loader: messageLoader(queryClient),
       }
     ]
+  },
+  {
+    path: '/practice',
+    element: <Practice />
   },
   { 
     element: <AuthLayout />,
