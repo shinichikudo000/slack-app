@@ -7,8 +7,18 @@ import SignInForm from './_auth/forms/SignInForm.tsx'
 import AuthLayout from './_auth/AuthLayout.tsx'
 import SignUpForm from './_auth/forms/SignUpForm.tsx'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { currentUserLoader } from './_route/loader.ts'
+import { currentUserLoader, messageLoader } from './_route/loader.ts'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import MessageContainer from './_root/MessageContainer.tsx'
+import NoChatSelected from './_root/NoChatSelected.tsx'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 10,
+    },
+  },
+})
 
 const router = createBrowserRouter([
   {
@@ -17,7 +27,13 @@ const router = createBrowserRouter([
     loader: currentUserLoader,
     children: [
       {
-        
+        element: <NoChatSelected />,
+        index: true
+      },
+      { 
+        path: '/:class/:id',
+        element: <MessageContainer />,
+        loader: messageLoader(queryClient),
       }
     ]
   },
@@ -38,8 +54,6 @@ const router = createBrowserRouter([
     ]
   }
 ])
-
-const queryClient = new QueryClient()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

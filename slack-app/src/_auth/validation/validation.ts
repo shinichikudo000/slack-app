@@ -1,4 +1,3 @@
-import { sign } from 'crypto'
 import { z } from 'zod'
 
 export const signUpSchema = z.object({

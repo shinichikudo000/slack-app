@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import SignOut from './SignOut';
 import SearchBar from './components/SearchBar';
 import { useQuery } from '@tanstack/react-query';
-import { fetchChannels, fetchUsers, filterUsers } from '@/react_query/utils';
+import { fetchChannels, fetchUsers, filterChannels, filterUsers } from '@/react_query/utils';
 import { useDebounce } from '@/_hooks/hooks';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import UserCard from './components/UserCard';
@@ -16,13 +16,19 @@ export interface User {
     email: string;
 }
 
+export interface Channels {
+    error: string,
+    id: number;
+    name: string
+}
+
 const SideBar = () => {
     const { data: allUsers, isLoading: isAllUsersLoading} = useQuery<User[], Error>({
         queryKey: ['allUsers'],
         queryFn: fetchUsers,
     })
     
-    const {data: allChannels, isLoading: isAllChannelsLoading} = useQuery({
+    const {data: allChannels, isLoading: isAllChannelsLoading} = useQuery<Channels[]>({
         queryKey: ['allChannels'],
         queryFn: fetchChannels
     })
@@ -32,6 +38,7 @@ const SideBar = () => {
     const debouncedSearch = useDebounce(search, 500)
     const [receiver, setReceiver] = useState<string>('users')
     const [isSearchLoading, setIsSearchLoading] = useState<boolean>(false)
+    const [channels, setChannels] = useState<Channels[]>([])
 
     useEffect(() => {
         const loadUsers = async () => {
@@ -41,7 +48,10 @@ const SideBar = () => {
             setIsSearchLoading(false)
         }
         const loadChannels = async () => {
-
+            setIsSearchLoading(true)
+            const channels = await filterChannels(debouncedSearch || '', allChannels || [])
+            setChannels(channels)
+            setIsSearchLoading(false)
         }
         if(receiver === 'users') {
             loadUsers()
@@ -53,7 +63,7 @@ const SideBar = () => {
 
   return (
     <>
-        <section className='w-1/4 absolute top-0 left-0 p-8 h-full overflow-hidden'>
+        <section className='absolute top-0 left-0 p-8 h-full overflow-hidden min-w-[300px]'>
         <SearchBar onChange={setSearch}/>
         <ToggleGroup type="single" className='my-4 flex justify-start'>
             <ToggleGroupItem value="users" onClick={() => {setReceiver('users')}}>
@@ -72,11 +82,21 @@ const SideBar = () => {
                     { isSearchLoading ? (
                         <IsLoading />
                     ) : receiver === 'users' ? (
-                        users?.map((user) => {
-                            return <UserCard userProp={user}/>
-                        })
+                        users.length > 0 ? (
+                            users?.map((user) => {
+                                return <UserCard userProp={user}/>
+                            })
+                        ) : (
+                            <div>No user found.</div>
+                        )
                     ) : (
-                        <div></div>
+                       channels.length > 0 ? (
+                        channels.map((channel) => {
+                            return <div>{channel.id}</div>
+                        })
+                       ) : (
+                            <div>No channel found.</div>
+                       )
                     )}
                 </ul>
             </div>

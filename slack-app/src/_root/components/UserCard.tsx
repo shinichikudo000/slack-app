@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 const UserCard = ({ userProp }: { userProp: User }) => {
   return (
-    <Link to={`/channel/${userProp.id}`} className='flex gap-4 mb-4 hover:bg-slate-300 rounded-full' key={userProp.id}>
+    <Link to={`/User/${userProp.id}`} className='flex gap-4 mb-4 hover:bg-slate-300 rounded-full' key={userProp.id}>
         <div className='w-12 h-12 rounded-full bg-slate-500 flex justify-center items-center'>
             {userProp.email[0].toUpperCase()}
         </div>

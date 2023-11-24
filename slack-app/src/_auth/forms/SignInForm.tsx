@@ -31,6 +31,7 @@ const SignInForm = () => {
                 email: data.email,
                 password: data.password
             })
+
             if (res.status === 200) {
                 const headers = res.headers || {}
 
@@ -47,7 +48,6 @@ const SignInForm = () => {
                 navigate('/')
             }
         } catch (error: any) {
-
             if (error.response && error.response.data && error.response.data.errors) {
                 const { errors } = error.response.data;
                 
