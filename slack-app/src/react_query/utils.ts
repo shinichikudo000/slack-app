@@ -1,13 +1,12 @@
 import { API } from "@/_api/api";
 import { Channels, User } from "@/_root/SideBar";
-import { MessageQuery, MessageQueryParams } from "@/_types/types";
 
 export const fetchUsers = async (): Promise<User[]> => {
     const response = await API.get('/users');
     return response.data.data;
 }
 
-export const messageQuery = ({ id, class: className }: any) => ({
+export const messageQuery = ({ id, class: className}: any) => ({
     queryKey: [`${className}_${id}`],
     queryFn: async () => {
         const response = await API.get('/messages', {
@@ -28,6 +27,25 @@ export const messageQuery = ({ id, class: className }: any) => ({
         return response.data.data
     }
 })
+
+export const fetchMessage = async ({ id, class: className, page}: any ) => {
+    const response = await API.get('/messages', {
+       params: {
+            receiver_id: id,
+            receiver_class: className
+       }
+    })
+    if(response) {
+        console.log(response.data)
+    }
+    if(response.data.error) {
+         throw new Response('', {
+            status: 404,
+             statusText: 'Not Found'
+         })
+    }
+    return response.data.data.slice((page - 1) * 10, page * 10)
+}
 
 export const filterUsers = async (search: string, users: User[] | undefined): Promise<User[]> => {
     await new Promise(resolve => setTimeout(resolve, 1000))

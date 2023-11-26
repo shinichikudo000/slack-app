@@ -12,6 +12,7 @@ const SignOut = () => {
     localStorage.setItem('uid', '')
     localStorage.setItem('expiry', '')
     localStorage.setItem('client', '')
+    localStorage.setItem('history', JSON.stringify([]))
 
     toast({
       title: 'Thank you for using!',

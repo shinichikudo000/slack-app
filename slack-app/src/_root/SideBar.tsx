@@ -7,6 +7,8 @@ import { useDebounce } from '@/_hooks/hooks';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import UserCard from './components/UserCard';
 import IsLoading from './components/IsLoading';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 export interface User {
     id: number;
@@ -32,7 +34,7 @@ const SideBar = () => {
         queryKey: ['allChannels'],
         queryFn: fetchChannels
     })
-
+    const history = JSON.parse(localStorage.getItem('history') || '[]') || []
     const [users, setUsers] = useState<User[]>([])
     const [search, setSearch] = useState<string>()
     const debouncedSearch = useDebounce(search, 500)
@@ -61,11 +63,18 @@ const SideBar = () => {
         }
     }, [debouncedSearch])
 
+    const handleClick = () => {
+        setSearch('')
+    }
+
   return (
     <>
-        <section className='absolute top-0 left-0 p-8 h-full overflow-hidden min-w-[300px]'>
+        <section className='p-8 h-full overflow-hidden w-[450px] border-r-[1px] border-slate-400'>
         <img src='/antisocial.png' alt='AntiSocial' className='w-[100px] mb-4'/>
-        <SearchBar onChange={setSearch} />
+        <SearchBar onChange={setSearch} value={search || ''} />
+        {
+            search && <div>Search for {search}</div>
+        }
         <ToggleGroup type="single" className='my-4 flex justify-start'>
             <ToggleGroupItem value="users" onClick={() => {setReceiver('users')}}>
                 <p className='font-oxygen'>Users</p> 
@@ -79,25 +88,38 @@ const SideBar = () => {
                 <IsLoading />
         ) : (
             <div className='overflow-y-auto overflow-x-hidden h-[65%] w-full text-ellipsis'>
-                <ul> 
-                    { isSearchLoading ? (
-                        <IsLoading />
-                    ) : receiver === 'users' ? (
-                        users.length > 0 ? (
-                            users?.map((user) => {
-                                return <UserCard userProp={user}/>
-                            })
-                        ) : (
-                            <div className='font-oxygen'>No user found.</div>
-                        )
-                    ) : (
-                       channels.length > 0 ? (
-                        channels.map((channel) => {
-                            return <div>{channel.id}</div>
+                {
+                    receiver === 'channels' && <Button>
+                        <Link to='/create_channel'>Create New Channel</Link>
+                        </Button>
+                }
+                <ul className='mt-4'> 
+                    { history.length === 0 && users.length === 0 && !search && receiver === 'users' ?  (
+                        <div>Welcome! Ready to start a conversation? Find a user to chat or create a channel with and enjoy connecting with others.</div>
+                    ) : history.length > 0 && users.length === 0  && !search && receiver === 'users' ? (
+                        history.map((userHistory: User) => {
+                            return <UserCard userProp={userHistory}  onClick={handleClick} />
                         })
-                       ) : (
-                            <div className='font-oxygen'>No channel found.</div>
-                       )
+                    ) : (
+                        isSearchLoading ? (
+                            <IsLoading />
+                        ) : receiver === 'users' ? (
+                            users.length > 0 ? (
+                                users?.map((user) => {
+                                    return <UserCard userProp={user} onClick={handleClick}/>
+                                })
+                            ) : (
+                                <div className='font-oxygen'>No user found.</div>
+                            )
+                        ) : (
+                           channels.length > 0 ? (
+                            channels.map((channel) => {
+                                return <div>{channel.id}</div>
+                            })
+                           ) : (
+                                <div className='font-oxygen'>No channel found.</div>
+                           )
+                        )
                     )}
                 </ul>
             </div>

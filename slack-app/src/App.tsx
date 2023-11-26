@@ -16,8 +16,10 @@ function App() {
         <Navigate to='/sign-in' />
       ) : (
         <>
-          <SideBar />
-          <Outlet />
+          <section className='absolute top-0 left-0 w-full min-w-[1000px] flex h-full'>
+            <SideBar />
+            <Outlet />
+          </section>
           <Toaster />
         </>
        )

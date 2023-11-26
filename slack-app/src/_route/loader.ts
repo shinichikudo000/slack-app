@@ -1,5 +1,4 @@
 import { User } from "@/_hooks/context";
-import { MessageQueryParams } from "@/_types/types";
 import { messageQuery } from "@/react_query/utils";
 
 

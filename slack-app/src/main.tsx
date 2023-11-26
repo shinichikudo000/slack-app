@@ -12,6 +12,9 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import MessageContainer from './_root/MessageContainer.tsx'
 import NoChatSelected from './_root/NoChatSelected.tsx'
 import Practice from './_root/Practice.tsx'
+import { ChakraProvider } from '@chakra-ui/react'
+import { messageAction } from './_route/action.ts'
+import CreateChannel from './_root/components/CreateChannel.tsx'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,7 +37,10 @@ const router = createBrowserRouter([
       { 
         path: '/:class/:id',
         element: <MessageContainer />,
-        loader: messageLoader(queryClient),
+      },
+      {
+        path: '/create_channel',
+        element: <CreateChannel />
       }
     ]
   },
