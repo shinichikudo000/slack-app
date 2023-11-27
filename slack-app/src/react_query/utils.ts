@@ -62,7 +62,8 @@ export const filterUsers = async (search: string, users: User[] | undefined): Pr
 
 export const fetchChannels = async () => {
     const response = await API.get('/channels')
-    return response.data
+    console.log(response.data.data)
+    return response.data.data
 }
 
 export const filterChannels = async (search: string, channels: Channels[] | undefined): Promise<Channels[]>=> {

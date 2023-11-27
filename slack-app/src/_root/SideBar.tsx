@@ -9,6 +9,7 @@ import UserCard from './components/UserCard';
 import IsLoading from './components/IsLoading';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import ChannelCard from './components/ChannelCard';
 
 export interface User {
     id: number;
@@ -21,6 +22,7 @@ export interface User {
 export interface Channels {
     error: string,
     id: number;
+    owner_id: number;
     name: string
 }
 
@@ -112,13 +114,19 @@ const SideBar = () => {
                                 <div className='font-oxygen'>No user found.</div>
                             )
                         ) : (
-                           channels.length > 0 ? (
-                            channels.map((channel) => {
-                                return <div>{channel.id}</div>
-                            })
-                           ) : (
-                                <div className='font-oxygen'>No channel found.</div>
-                           )
+                            allChannels ? (
+                                allChannels.map((channel) => {
+                                    return <ChannelCard channelProp={channel} />
+                                })
+                            ) : (
+                                channels.length > 0 ? (
+                                    channels.map((channel) => {
+                                        return <div>{channel.id}</div>
+                                    })
+                                   ) : (
+                                        <div className='font-oxygen'>No channel found.</div>
+                                   )
+                            )
                         )
                     )}
                 </ul>

@@ -49,14 +49,14 @@ const MessageContainer = () => {
                 })
                 )
             }
-        <div className='w-full  absolute bottom-0 p-8'>
-            <form onSubmit={handleMessageSubmit}>
+        <div className='w-full absolute bottom-0 p-8'>
+            <form onSubmit={handleMessageSubmit} className='relative'>
                 <Input placeholder='Type your message here' value={sendMessage} onChange={(e) => {
                     setSendMessage(e.target.value)
                 }} />
                 {
                     message !== '' && 
-                    <span className='material-symbols-outlined'>
+                    <span className='material-symbols-outlined absolute right-4 bottom-2'>
                         send
                     </span>
                 }
