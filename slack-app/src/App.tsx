@@ -15,13 +15,13 @@ function App() {
       !accessToken && !uid && !expiry && !client ? (
         <Navigate to='/sign-in' />
       ) : (
-        <>
-          <section className='absolute top-0 left-0 w-full min-w-[1000px] flex h-full'>
+        <section className='h-full min-w-[900px]'>
+          <section className='absolute top-0 left-0 w-full flex h-full'>
             <SideBar />
             <Outlet />
           </section>
           <Toaster />
-        </>
+        </section>
        )
     }
     </>

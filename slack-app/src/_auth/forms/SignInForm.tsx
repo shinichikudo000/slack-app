@@ -9,6 +9,7 @@ import { Link, useNavigate, Navigate, useLoaderData } from 'react-router-dom'
 import { API } from '@/_api/api'
 import { Progress } from '@/components/ui/progress'
 import { User } from '@/_hooks/context'
+import { toast } from '@/components/ui/use-toast';
 
 
 const SignInForm = () => {
@@ -44,6 +45,11 @@ const SignInForm = () => {
                 localStorage.setItem('access-token', headers['access-token']);
                 localStorage.setItem('client', headers['client']);
                 localStorage.setItem('expiry', headers['expiry']);
+
+                toast({
+                    title: 'Welcome to Anti Social',
+                    description: 'You are currently signed in'
+                })
 
                 navigate('/')
             }

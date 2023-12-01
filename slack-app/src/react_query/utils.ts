@@ -1,10 +1,16 @@
 import { API } from "@/_api/api";
 import { Channels, User } from "@/_root/SideBar";
+import { Message } from "@/_types/types";
 
 export const fetchUsers = async (): Promise<User[]> => {
     const response = await API.get('/users');
     return response.data.data;
 }
+
+export const usersQuery = () => ({
+    queryKey: ['allUsers'],
+    queryFn: fetchUsers,
+})
 
 export const messageQuery = ({ id, class: className}: any) => ({
     queryKey: [`${className}_${id}`],
@@ -15,9 +21,6 @@ export const messageQuery = ({ id, class: className}: any) => ({
                 receiver_class: className
            }
         })
-        if(response) {
-            console.log(response.data)
-        }
         if(response.data.error) {
              throw new Response('', {
                 status: 404,
@@ -62,7 +65,6 @@ export const filterUsers = async (search: string, users: User[] | undefined): Pr
 
 export const fetchChannels = async () => {
     const response = await API.get('/channels')
-    console.log(response.data.data)
     return response.data.data
 }
 
@@ -76,3 +78,47 @@ export const filterChannels = async (search: string, channels: Channels[] | unde
     }
     return []
 }
+
+export const addMessage =  async ({ id, class: receiverClass, message }): Promise<Message> => {
+    try {
+        const response = await API.post('messages', {
+            receiver_id: id,
+            receiver_class: receiverClass,
+            body: message,
+        });
+        return response.data
+    } catch (error) {
+        console.error('Error adding message:', error)
+        throw error
+    }
+}
+
+export const addChannel = async ({ data: { channelName, memberArray } }: { data: { channelName: string; memberArray: string[] } }) => {
+    try {
+      const res = await API.post('/channels', {
+        name: channelName,
+        user_ids: memberArray,
+      });
+      return res.data;
+    } catch (error) {
+      console.error('Error creating channel:', error);
+      throw error;
+    }
+  };
+
+  export const additionalMembersFunc = async ({ channelId, memberArray }) => {
+    const res = memberArray.map((member) => {
+        try {
+            const response = API.post('/channel/add_member', {
+                id: channelId,
+                member_id: member
+            });
+            // Handle the response if needed
+            return response
+        } catch (error) {
+            // Handle errors here
+            console.error(error);
+        }
+    })
+    return res
+};

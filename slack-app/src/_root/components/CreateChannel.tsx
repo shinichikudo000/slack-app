@@ -5,23 +5,20 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
 import { User } from '../SideBar'
-import { filterUsers } from '@/react_query/utils'
-import { useQueryClient } from '@tanstack/react-query'
+import { addChannel, filterUsers } from '@/react_query/utils'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useDebounce } from '@/_hooks/hooks'
 import UserCardCreateChannel from './UserCardCreateChannel'
 import IsLoading from './IsLoading'
-import { API } from '@/_api/api'
 import { toast } from '@/components/ui/use-toast'
 import { useNavigate } from 'react-router-dom'
 
-
-
-interface Action {
+export interface Action {
     type: 'addMember' | 'removeMember';
     user: User
 }
 
-interface ContextProps {
+export interface ContextProps {
     dispatch: Dispatch<Action>;
   }
 
@@ -44,13 +41,13 @@ function reducer(members: User[], action: Action): User[] {
     }
 }
 
-const initialState: User[] = []
+export const initialState: User[] = []
 
 export const Context = createContext({} as ContextProps)
 
 const CreateChannel = () => {
     const queryClient = useQueryClient()
-    const allUsers = queryClient.getQueriesData<User[]>(['allUsers'])[0][1]
+    const allUsers = queryClient.getQueryData<User[]>(['allUsers'])
     const [users, setUsers] = useState<User[]>([])
     const [search, setSearch] = useState<string>('')
     const debouncedSearch = useDebounce(search, 500)
@@ -72,30 +69,33 @@ const CreateChannel = () => {
                 setIsSearchLoading(false);
             }
         };
-        console.log(members)
+        console.log(allUsers)
         loadUsers();
     }, [debouncedSearch]);
 
     const form = useForm()
+    const { mutateAsync: addChannelMutation } = useMutation({
+        mutationFn: addChannel,
+        onSuccess: () => {
+          queryClient.invalidateQueries(['allChannels']);
+        },
+      });
 
     const onSubmit = async (data: any) => {
-        const memberArray = members.map((member) => member.id)
+        const memberArray = members.map((member) => member.id);
         try {
-            const res  = await API.post('/channels', {
-                name: data.channelName,
-                user_ids: memberArray
-            })
-            if(res.status === 200) {
-                toast({
-                    title: 'Successfully created a channel',
-                    description: ''
-                })
-                navigate(`/Channel/${res.data.id}`)
-            }
+          await addChannelMutation({
+            data: { channelName: data.channelName, memberArray: memberArray.map(String) },
+          });
+          toast({
+            title: 'Successfully created a channel',
+            description: '',
+          });
+          navigate('/');
         } catch (error) {
-            console.error('Error creating channel:', error);
+          console.error('Error creating channel:', error);
         }
-    }
+      };
 
     const handleClick = () => {
         setSearch('')

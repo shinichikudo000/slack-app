@@ -70,12 +70,11 @@ const SideBar = () => {
     }
 
   return (
-    <>
-        <section className='p-8 h-full overflow-hidden w-[450px] border-r-[1px] border-slate-400'>
+    <section className='p-8 h-full overflow-hidden min-w-[400px] max-w-[400px] border-r-[1px] border-slate-400'>
         <img src='/antisocial.png' alt='AntiSocial' className='w-[100px] mb-4'/>
         <SearchBar onChange={setSearch} value={search || ''} />
         {
-            search && <div>Search for {search}</div>
+            search && <div className='font-oxygen text-md mt-4'>Search for {search}</div>
         }
         <ToggleGroup type="single" className='my-4 flex justify-start'>
             <ToggleGroupItem value="users" onClick={() => {setReceiver('users')}}>
@@ -89,7 +88,7 @@ const SideBar = () => {
             isAllUsersLoading || isAllChannelsLoading ? (
                 <IsLoading />
         ) : (
-            <div className='overflow-y-auto overflow-x-hidden h-[65%] w-full text-ellipsis'>
+            <div className='overflow-y-auto overflow-x-hidden h-[60%] w-full text-ellipsis'>
                 {
                     receiver === 'channels' && <Button>
                         <Link to='/create_channel'>Create New Channel</Link>
@@ -97,7 +96,7 @@ const SideBar = () => {
                 }
                 <ul className='mt-4'> 
                     { history.length === 0 && users.length === 0 && !search && receiver === 'users' ?  (
-                        <div>Welcome! Ready to start a conversation? Find a user to chat or create a channel with and enjoy connecting with others.</div>
+                        <div className='font-oxygen text-md text-center h-full'>Welcome! Ready to start a conversation? Find a user to chat or create a channel with and enjoy connecting with others.</div>
                     ) : history.length > 0 && users.length === 0  && !search && receiver === 'users' ? (
                         history.map((userHistory: User) => {
                             return <UserCard userProp={userHistory}  onClick={handleClick} />
@@ -133,8 +132,7 @@ const SideBar = () => {
             </div>
         )}
         <SignOut />
-      </section>
-    </>
+    </section>
   )
 }
 

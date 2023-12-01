@@ -1,8 +1,8 @@
 #root {
-    max-width: full;
+    max-width: 'full';
     margin: 0 auto;
     padding: 0;
-    height: full;
+    height: 'full';
     min-width: 1000px
   }
   

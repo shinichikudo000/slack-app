@@ -1,20 +1,56 @@
 import { Input } from '@/components/ui/input'
 import '../App.css'
-import { fetchMessage, messageQuery} from '@/react_query/utils'
-import { useInfiniteQuery, useQuery} from '@tanstack/react-query'
+import { addMessage, messageQuery} from '@/react_query/utils'
+import { useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
 import React, { useState } from 'react'
-import { redirect, useNavigate, useParams } from 'react-router-dom'
-import { API } from '@/_api/api'
+import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
+import { Channels, User } from './SideBar'
+import MessageCard from './MessageCard'
+import { Message } from '@/_types/types'
+import { toast } from '@/components/ui/use-toast'
+import ChannelInfo from './components/ChannelInfo'
 
 
-const MessageContainer = () => {
+const MessageContainer = ({ queryClient }: { queryClient: any }) => {
+    const initialData = useLoaderData()
+    const newQueryClient = useQueryClient()
+
     const params = useParams<{ id?: string; class?: string }>()
-    const {data: message } = useQuery(messageQuery({
-        id: params.id || '',
-        class: params.class || '',
-        
-    })) 
+    const id: string = params.id || ''
+
+    const { data: message } = useQuery({
+        ...messageQuery({
+            id: params.id || '',
+            class: params.class || '',
+        }),
+        initialData
+    }) 
+
+    const { mutateAsync: addMessageMutation } = useMutation({
+        mutationFn: addMessage,
+        onSuccess: () => {
+            newQueryClient.invalidateQueries([`${params.class}_${params.id}`])
+        }
+    })
+    
     const [sendMessage, setSendMessage] = useState<string>('')
+
+    const allUsers = queryClient.getQueryData(['allUsers'])
+    const allChannels = queryClient.getQueryData(['allChannels'])
+
+    let data!: Channels | User
+
+    if (params.class === 'User' && params.id) {
+        const user = allUsers?.find((user) => user.id === parseInt(id, 10));
+        if (user) {
+            data = user;
+        }
+    } else {
+        const channel = allChannels?.find((channel) => channel.id === parseInt(id, 10));
+        if (channel) {
+            data = channel;
+        }
+    }
 
     const navigate = useNavigate()
 
@@ -22,15 +58,13 @@ const MessageContainer = () => {
         e.preventDefault()
         if(sendMessage !== '') {
             try {
-                const res = await API.post('/messages', {
-                    receiver_id: params.id,
-                    receiver_class: params.class,
-                    body: sendMessage
+                await addMessageMutation({ id: params.id, class: params.class, message: sendMessage })
+                setSendMessage('')
+                toast({
+                    title: 'You sent a message',
+                    description: ''
                 })
-                if (res.status === 200) {
-                    setSendMessage('')
-                    navigate(`/${params.class}/${params.id}`)
-                }
+                navigate(`/${params.class}/${params.id}`)
             } catch(error: any) {
                 console.log(error)
             }
@@ -38,19 +72,35 @@ const MessageContainer = () => {
     }
 
   return (
-    <>
-       <section className='relative flex flex-col p-8 justify-center items-center w-full h-full '>
+    <section className='flex flex-col w-full h-full'>
+        <section className='p-4 font-anton text-2xl bg-slate-300 h-[10%] flex items-center'>
+            { 
+                params.class === 'User' && data && 'email' in data ? (
+                    <div>{(data as User).email}</div>
+                ) : (
+                    data && <div className=''>
+                            <h1>
+                                {(data as Channels).name}
+                            </h1>
+                            <ChannelInfo paramsProp={params}/>
+                        </div>
+                )
+            }
+        </section>
+       <section className='relative flex flex-col p-8 items-center w-full h-[90%] '>
+        <div className='h-[90%] overflow-y-auto w-full'>
         {
             !message || message.length === 0 ? (
-                <div>No existing conversation</div>
+                <div className='w-full h-full flex justify-center items-center font-sourceCodePro text-2xl'>No existing conversation</div>
             ) : (
-                message.map((messages: any) => {
-                    return <div>{messages.body}</div>
+                message.map((messages: Message) => {
+                    return <MessageCard messageProp={messages}/>
                 })
                 )
             }
+        </div>
         <div className='w-full absolute bottom-0 p-8'>
-            <form onSubmit={handleMessageSubmit} className='relative'>
+            <form method='post' onSubmit={handleMessageSubmit} className='relative'>
                 <Input placeholder='Type your message here' value={sendMessage} onChange={(e) => {
                     setSendMessage(e.target.value)
                 }} />
@@ -63,7 +113,7 @@ const MessageContainer = () => {
             </form>
         </div>
        </section>
-    </>
+    </section>
   )
 }
 

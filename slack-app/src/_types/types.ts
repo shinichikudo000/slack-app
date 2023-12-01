@@ -19,13 +19,13 @@ export interface Message {
     body: string;
     created_at: string;
     sender: Sender;
-    receiver: Receiver;
-}
-
-export interface Receiver {
-
 }
 
 export interface Sender {
-    
+    id: number,
+    email: string,
+}
+
+export interface ChannelMember {
+    user_id: number
 }
