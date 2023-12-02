@@ -41,12 +41,12 @@ const MessageContainer = ({ queryClient }: { queryClient: any }) => {
     let data!: Channels | User
 
     if (params.class === 'User' && params.id) {
-        const user = allUsers?.find((user) => user.id === parseInt(id, 10));
+        const user = allUsers?.find((user:any) => user.id === parseInt(id, 10));
         if (user) {
             data = user;
         }
     } else {
-        const channel = allChannels?.find((channel) => channel.id === parseInt(id, 10));
+        const channel = allChannels?.find((channel: any) => channel.id === parseInt(id, 10));
         if (channel) {
             data = channel;
         }
@@ -78,7 +78,7 @@ const MessageContainer = ({ queryClient }: { queryClient: any }) => {
                 params.class === 'User' && data && 'email' in data ? (
                     <div>{(data as User).email}</div>
                 ) : (
-                    data && <div className=''>
+                    data && <div className='flex gap-8'>
                             <h1>
                                 {(data as Channels).name}
                             </h1>
