@@ -71,7 +71,7 @@ const SignUpForm = () => {
                     <Form {...form}>
                         <img src='/antisocial.png' alt='AntiSocial' className='w-[150px]'/>
                         <div>
-                            <h2 className='font-sourceCodePro text-2xl'>Create New Account</h2>
+                            <h2 className='font-sourceCodePro text-2xl text-center'>Create New Account</h2>
                             <p className='font-sourceCodePro text-lg'>To use AntiSocial enter your details</p>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 w-full mt-4 text-left">
                                 <FormField
